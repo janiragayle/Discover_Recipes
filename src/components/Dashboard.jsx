@@ -1,14 +1,15 @@
 import React, { useEffect, useState } from 'react';
 import { fetchRecipes } from '../api';
+import { Link } from 'react-router-dom';
 
-function Dashboard({ search, filter, cuisine }) {
+function Dashboard({ search, filter, cuisine, mealType, sort, viewMode }) {
   const [recipes, setRecipes] = useState([]);
   const [error, setError] = useState('');
 
   useEffect(() => {
     const loadData = async () => {
       try {
-        const data = await fetchRecipes(search, filter, cuisine);
+        const data = await fetchRecipes(search, filter, cuisine, mealType, sort);
         setRecipes(data);
         setError('');
       } catch (err) {
@@ -16,7 +17,7 @@ function Dashboard({ search, filter, cuisine }) {
       }
     };
     loadData();
-  }, [search, filter, cuisine]);
+  }, [search, filter, cuisine, mealType, sort]);
 
   const avgTime = (
     recipes.reduce((sum, r) => sum + r.readyInMinutes, 0) / recipes.length || 0
@@ -33,22 +34,28 @@ function Dashboard({ search, filter, cuisine }) {
         <div className="summary-card">⚡ Under 30 Min: {under30}</div>
       </div>
 
-      <div className="recipe-list">
+      <div className={`recipe-list ${viewMode}`}>
         {recipes.map(recipe => (
-          <div key={recipe.id} className="recipe-card">
-            <img src={recipe.image} alt={recipe.title} />
-            <h4 className="recipe-title">{recipe.title}</h4>
-            <p className="recipe-meta">Ready in {recipe.readyInMinutes} mins</p>
-            <div className="recipe-tags">
-              {recipe.vegetarian && <span className="tag">Vegetarian</span>}
-              {recipe.diets?.map(d => (
-                <span key={d} className="tag">{d}</span>
-              ))}
-              {recipe.cuisines?.map(c => (
-                <span key={c} className="tag">{c}</span>
-              ))}
+          <Link
+            key={recipe.id}
+            to={`/recipes/${recipe.id}`}
+            style={{ textDecoration: 'none', color: 'inherit' }}
+          >
+            <div className={`recipe-card ${viewMode}`}>
+              <img src={recipe.image} alt={recipe.title} />
+              <h4 className="recipe-title">{recipe.title}</h4>
+              <p className="recipe-meta">Ready in {recipe.readyInMinutes} mins</p>
+              <div className="recipe-tags">
+                {recipe.vegetarian && <span className="tag">Vegetarian</span>}
+                {recipe.diets?.map(d => (
+                  <span key={d} className="tag">{d}</span>
+                ))}
+                {recipe.cuisines?.map(c => (
+                  <span key={c} className="tag">{c}</span>
+                ))}
+              </div>
             </div>
-          </div>
+          </Link>
         ))}
       </div>
     </div>

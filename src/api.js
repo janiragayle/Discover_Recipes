@@ -1,11 +1,25 @@
 const API_KEY = import.meta.env.VITE_RECIPE_KEY;
-const BASE_URL = 'https://api.spoonacular.com/recipes/complexSearch';
 
-export const fetchRecipes = async (query = '', diet = '', cuisine = '') => {
-  const url = `${BASE_URL}?apiKey=${API_KEY}&number=10&query=${query}&diet=${diet}&cuisine=${cuisine}&addRecipeInformation=true`;
+export async function fetchRecipes(search, diet, cuisine, mealType, sort) {
+  const params = new URLSearchParams({
+    apiKey: API_KEY,
+    number: 20,
+    addRecipeInformation: true,
+  });
 
-  const res = await fetch(url);
-  if (!res.ok) throw new Error('Failed to fetch recipes');
-  const data = await res.json();
+  if (search) params.append('query', search);
+  if (diet) params.append('diet', diet);
+  if (cuisine) params.append('cuisine', cuisine);
+  if (mealType) params.append('type', mealType);
+  if (sort === 'popularity') params.append('sort', 'popularity');
+  if (sort === 'time') params.append('sort', 'time');
+  if (sort === 'health') params.append('sort', 'healthiness');
+
+  const url = `https://api.spoonacular.com/recipes/complexSearch?${params.toString()}`;
+
+  const response = await fetch(url);
+  if (!response.ok) throw new Error('Error fetching recipes.');
+
+  const data = await response.json();
   return data.results;
-};
+}
