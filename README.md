@@ -51,7 +51,7 @@ The following **additional** features are implemented:
 
 Here's a walkthrough of implemented user stories:
 
-<img src='/recipe_api/src/images/walkthrough.gif' title='Video Walkthrough' width='' alt='Video Walkthrough' />
+<img src='src/assets/Kapture 2025-07-22 at 23.37.48.gif' />
 
 
 ## Notes
